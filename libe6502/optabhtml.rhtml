@@ -1,0 +1,76 @@
+require 'OpCodeTable6502.rb'
+require 'erb'
+
+def make_thing(a,o,v)
+ val=OpCode6502.new(a)
+ template=%{
+<html>
+ <head>
+ <title><%= o %></title>
+ <style>
+  table {margin: 0px;padding: 0px;border-collapse: collapse}
+  .colheader {background: #ddddff;}
+  .rowheader {background: #ddddff;}
+  .item {border: 1px dashed gray; background: #ddddff;}
+  .noitem {background: white;}
+  .implemented {border: 1px dashed gray; background: #ddffdd;}
+ </style>
+ </head>
+ <body>
+ <h1><%= o %></h1>
+ <table>
+ <colgroup span="17" width="1*">
+  <tr>
+   <td></td>
+  <% for x in 0..15 %>
+   <td class="rowheader">x<i><%= "%01X" % x%></i></td>
+  <% end %>
+  <% for y in 0..15 %>
+   <tr>
+    <td class="colheader"><i><%= "%01X" % y%></i>x</td>
+    <% for x in 0..15 %>
+    <% i=y * 16 + x %>
+    <% if val[i]!=nil %>
+    
+    <td class="<%= val.implemented?(i) ? 'implemented' : 'item' %>">
+     <%= val[i][0] %> 
+     <br>
+     <%= val.mode_name(i)  %>
+     <br>
+     <% a=val.mode(i) %>
+     <%= a ? a.inc_pc+1 : 'U'%>
+     <br>
+     <%# a="%02i%02i" % [x,y] %>
+     <%# if File.exists?("%s_%s.html" % [v,a]) %>
+     <%# end %>
+     <%#= "%s_%s.html" % [v,a] %>
+    </td>
+    <% else %>
+    <td class="noitem"></td>
+    <% end %>
+    <% end %>
+  </tr>
+  <% end %>
+ </table>
+ <a href="index.html">Back to index</a>
+</html>
+}
+ rhtml=ERB.new(template)
+ rhtml.run(binding)
+end
+
+Dir.glob(ARGV[0]+'/*.full').each {|x|
+h=File.basename(x)
+n=h.sub('full','html')
+h=h.split('.')
+o=h[0].sub('-',' ')
+puts n
+puts o
+puts x
+a=$stdout
+b=File.new(ARGV[1]+'/'+n,'w')
+$stdout=b
+make_thing(x,o,ARGV[1]+'/'+h[0])
+$stdout=a
+b.close()
+}

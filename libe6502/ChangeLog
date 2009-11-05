@@ -1,0 +1,8 @@
+0.04
+        Print out the carry flag in the testing system
+        Spot self jumps in the testing system and exit.
+        Assembler: Support labels and Direct/Zeropage assembly instructions
+        Assembler: Look at the label MAIN as the start point.
+        Assembler: Support relative jumps
+0.03
+	Assembler: Basic stuff

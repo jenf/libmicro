@@ -1,0 +1,32 @@
+class DirectPageIndexed
+ include Operators
+ def width
+  return 3
+ end
+ def load
+  print <<-ENDLOAD
+  uint16_t addr=read_mem8(BANKADDR(PC,PBR)+1);
+  uint16_t var=read_mem16(addr+D+X);
+  ENDLOAD
+ end
+ def store
+  printf "  set_mem16(addr+D+X,var);\n"
+ end
+end
+class DirectPage
+ include Operators
+ def width
+  return 3
+ end
+ def load
+  print <<-ENDLOAD
+  // We aren't sure if the D wraps around back to the start when you go over
+  // the page limit
+  uint16_t addr=read_mem8(BANKADDR(PC,PBR)+1);
+  uint16_t var=read_mem16(addr+D);
+  ENDLOAD
+ end
+ def store
+  printf "  set_mem16(addr+D,var);\n"
+ end
+end
